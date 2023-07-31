@@ -27,7 +27,12 @@ import { BrowserConfiguration, Configuration } from "../config/Configuration";
  * to obtain JWT tokens as described in the OAuth 2.0 Authorization Code Flow with PKCE specification.
  */
 export class PublicClientApplication implements IPublicClientApplication {
-    protected controller: IController;
+    /*
+     * Definite assignment assertion used below
+     * https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-7.html#definite-assignment-assertions
+     */
+    protected controller!: IController;
+    protected configuration: Configuration;
 
     public static async createPublicClientApplication(
         configuration: Configuration
@@ -62,12 +67,9 @@ export class PublicClientApplication implements IPublicClientApplication {
      * @param IController Optional parameter to explictly set the controller. (Will be removed when we remove public constructor)
      */
     public constructor(configuration: Configuration, controller?: IController) {
+        this.configuration = configuration;
         if (controller) {
             this.controller = controller;
-        } else {
-            throw new Error(
-                "PublicClientApplication constructor called without a controller"
-            );
         }
     }
 
@@ -75,6 +77,10 @@ export class PublicClientApplication implements IPublicClientApplication {
      * Initializer function to perform async startup tasks such as connecting to WAM extension
      */
     async initialize(): Promise<void> {
+        if (this.controller === undefined) {
+            const factory = new ControllerFactory(this.configuration);
+            this.controller = await factory.createController();
+        }
         return this.controller.initialize();
     }
 

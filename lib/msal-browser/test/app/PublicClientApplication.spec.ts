@@ -146,10 +146,10 @@ function stubProvider(pca: PublicClientApplication) {
         });
 }
 
-describe("PublicClientApplication.ts Class Unit Tests", () => {
+describe("PublicClientApplication.ts Class Unit Tests", async () => {
     globalThis.MessageChannel = require("worker_threads").MessageChannel; // jsdom does not include an implementation for MessageChannel
     let pca: PublicClientApplication;
-    beforeEach(() => {
+    beforeEach(async () => {
         pca = new PublicClientApplication({
             auth: {
                 clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -165,6 +165,8 @@ describe("PublicClientApplication.ts Class Unit Tests", () => {
                 allowNativeBroker: false,
             },
         });
+
+        await pca.initialize();
 
         BrowserPerformanceMeasurement.flushMeasurements = jest
             .fn()
@@ -268,8 +270,8 @@ describe("PublicClientApplication.ts Class Unit Tests", () => {
                 for (let i = 0; i < apps.length; i++) {
                     // @ts-ignore
                     expect(apps[i].controller.initialized).toBeTruthy();
+                    // @ts-ignore
                     expect(
-                        // @ts-ignore
                         apps[i].controller.getNativeExtensionProvider()
                     ).toBeInstanceOf(NativeMessageHandler);
                 }
@@ -357,9 +359,9 @@ describe("PublicClientApplication.ts Class Unit Tests", () => {
                 for (let i = 0; i < apps.length; i++) {
                     // @ts-ignore
                     expect(apps[i].controller.initialized).toBeTruthy();
+                    // @ts-ignore
                     nativeProviders += apps[
                         i
-                        // @ts-ignore
                     ].controller.getNativeExtensionProvider()
                         ? 1
                         : 0;
