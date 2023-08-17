@@ -77,9 +77,10 @@ describe("PopupClient", () => {
             },
         });
 
+        await pca.initialize();
+
         //Implementation of PCA was moved to controller.
         pca = (pca as any).controller;
-        await pca.initialize();
 
         //@ts-ignore
         popupClient = new PopupClient(
@@ -228,6 +229,8 @@ describe("PopupClient", () => {
                 },
             });
 
+            await pca.initialize();
+
             //PCA implementation moved to controller
             pca = (pca as any).controller;
 
@@ -304,6 +307,8 @@ describe("PopupClient", () => {
                     allowNativeBroker: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -406,7 +411,7 @@ describe("PopupClient", () => {
             expect(tokenResp).toEqual(testTokenResponse);
         });
 
-        it("throws if server responds with accountId but extension message handler is not instantiated", (done) => {
+        it("throws if server responds with accountId but extension message handler is not instantiated", async () => {
             pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -415,6 +420,8 @@ describe("PopupClient", () => {
                     allowNativeBroker: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -503,7 +510,7 @@ describe("PopupClient", () => {
                 pca.nativeInternalStorage
             );
 
-            popupClient
+            const result = await popupClient
                 .acquireToken({
                     redirectUri: TEST_URIS.TEST_REDIR_URI,
                     scopes: TEST_CONFIG.DEFAULT_SCOPES,
@@ -517,7 +524,6 @@ describe("PopupClient", () => {
                         BrowserAuthErrorMessage.nativeConnectionNotEstablished
                             .desc
                     );
-                    done();
                 });
         });
 
@@ -666,7 +672,7 @@ describe("PopupClient", () => {
             expect(popupSpy.getCall(0).args).toHaveLength(3);
         });
 
-        it("opens popups asynchronously if configured", (done) => {
+        it("opens popups asynchronously if configured", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -675,6 +681,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -712,11 +720,10 @@ describe("PopupClient", () => {
                             `msal.${TEST_CONFIG.MSAL_CLIENT_ID}`
                         )
                     ).toBeTruthy();
-                    done();
                     return null;
                 });
 
-            popupClient.logout().catch(() => {});
+            await popupClient.logout().catch(() => {});
         });
 
         it("catches error and cleans cache before rethrowing", async () => {
@@ -746,7 +753,7 @@ describe("PopupClient", () => {
             }
         });
 
-        it("includes postLogoutRedirectUri if one is passed", (done) => {
+        it("includes postLogoutRedirectUri if one is passed", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -755,6 +762,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -792,20 +801,19 @@ describe("PopupClient", () => {
                             postLogoutRedirectUri
                         )}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
             const postLogoutRedirectUri = "https://localhost:8000/logout";
 
-            popupClient
+            const result = await popupClient
                 .logout({
                     postLogoutRedirectUri,
                 })
                 .catch(() => {});
         });
 
-        it("includes postLogoutRedirectUri if one is configured", (done) => {
+        it("includes postLogoutRedirectUri if one is configured", async () => {
             const postLogoutRedirectUri = "https://localhost:8000/logout";
             let pca = new PublicClientApplication({
                 auth: {
@@ -816,6 +824,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -851,14 +861,13 @@ describe("PopupClient", () => {
                             postLogoutRedirectUri
                         )}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
-            popupClient.logout().catch(() => {});
+            const result = await popupClient.logout().catch(() => {});
         });
 
-        it("includes postLogoutRedirectUri as current page if none is set on request", (done) => {
+        it("includes postLogoutRedirectUri as current page if none is set on request", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -867,6 +876,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -904,14 +915,13 @@ describe("PopupClient", () => {
                             window.location.href
                         )}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
-            popupClient.logout().catch(() => {});
+            const result = await popupClient.logout().catch(() => {});
         });
 
-        it("includes logoutHint if it is set on request", (done) => {
+        it("includes logoutHint if it is set on request", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -920,6 +930,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -949,18 +961,17 @@ describe("PopupClient", () => {
                     expect(urlNavigate).toContain(
                         `logout_hint=${encodeURIComponent(logoutHint)}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
-            popupClient
+            const result = await popupClient
                 .logout({
                     logoutHint,
                 })
                 .catch(() => {});
         });
 
-        it("includes logoutHint from ID token claims if account is passed in and logoutHint is not", (done) => {
+        it("includes logoutHint from ID token claims if account is passed in and logoutHint is not", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -969,6 +980,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -1036,18 +1049,17 @@ describe("PopupClient", () => {
                     expect(urlNavigate).toContain(
                         `logout_hint=${encodeURIComponent(logoutHint)}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
-            popupClient
+            const result = await popupClient
                 .logout({
                     account: testAccountInfo,
                 })
                 .catch(() => {});
         });
 
-        it("logoutHint attribute takes precedence over ID Token Claims from provided account when setting logout_hint", (done) => {
+        it("logoutHint attribute takes precedence over ID Token Claims from provided account when setting logout_hint", async () => {
             let pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -1056,6 +1068,8 @@ describe("PopupClient", () => {
                     asyncPopups: true,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -1126,11 +1140,10 @@ describe("PopupClient", () => {
                     expect(urlNavigate).not.toContain(
                         `logout_hint=${encodeURIComponent(loginHint)}`
                     );
-                    done();
                     throw "Stop Test";
                 });
 
-            popupClient
+            const result = await popupClient
                 .logout({
                     account: testAccountInfo,
                     logoutHint,
@@ -1516,7 +1529,7 @@ describe("PopupClient", () => {
             });
         });
 
-        it("throws timeout if popup is same origin but no hash is present", (done) => {
+        it("throws timeout if popup is same origin but no hash is present", async () => {
             const popup = {
                 location: {
                     href: "http://localhost",
@@ -1533,6 +1546,8 @@ describe("PopupClient", () => {
                     windowHashTimeout: 10,
                 },
             });
+
+            await pca.initialize();
 
             //PCA implementation moved to controller
             pca = (pca as any).controller;
@@ -1559,13 +1574,14 @@ describe("PopupClient", () => {
                 TEST_CONFIG.CORRELATION_ID
             );
 
-            // @ts-ignore
-            popupClient.monitorPopupForHash(popup).catch((e) => {
-                expect(e.errorCode).toEqual(
-                    BrowserAuthErrorMessage.monitorPopupTimeoutError.code
-                );
-                done();
-            });
+            const result = await popupClient
+                //@ts-ignore
+                .monitorPopupForHash(popup)
+                .catch((e) => {
+                    expect(e.errorCode).toEqual(
+                        BrowserAuthErrorMessage.monitorPopupTimeoutError.code
+                    );
+                });
         });
 
         it("returns hash", (done) => {
@@ -1589,7 +1605,7 @@ describe("PopupClient", () => {
             });
         });
 
-        it("returns server code response in query form when serverResponseType in OIDCOptions is query", (done) => {
+        it("returns server code response in query form when serverResponseType in OIDCOptions is query", async () => {
             pca = new PublicClientApplication({
                 auth: {
                     clientId: TEST_CONFIG.MSAL_CLIENT_ID,
@@ -1597,6 +1613,8 @@ describe("PopupClient", () => {
                     OIDCOptions: { serverResponseType: "query" },
                 },
             });
+
+            await pca.initialize();
 
             //Implementation of PCA was moved to controller.
             pca = (pca as any).controller;
@@ -1635,10 +1653,8 @@ describe("PopupClient", () => {
             };
 
             // @ts-ignore
-            popupClient.monitorPopupForHash(popup).then((hash: string) => {
-                expect(hash).toEqual("code=hello");
-                done();
-            });
+            const result = await popupClient.monitorPopupForHash(popup);
+            expect(result).toEqual("code=hello");
         });
 
         it("closed", (done) => {
