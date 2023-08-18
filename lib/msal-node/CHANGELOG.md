@@ -1,8 +1,18 @@
 # Change Log - @azure/msal-node
 
-This log was last generated on Fri, 11 Aug 2023 19:00:44 GMT and should not be manually modified.
+This log was last generated on Fri, 18 Aug 2023 18:32:15 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 2.0.2
+
+Fri, 18 Aug 2023 18:32:15 GMT
+
+### Patches
+
+- Fixed jwt import error #6347 (rginsburg@microsoft.com)
+- Fixed http(s) imports #6349 (rginsburg@microsoft.com)
+- Bump @azure/msal-common to v14.0.2
 
 ## 2.0.1
 
